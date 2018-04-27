@@ -5,6 +5,59 @@ require 'rspec'
 require_relative '../src/roman-adder'
 
 RSpec.describe do
+  it "1 to 10 Roman numerals to decimal" do
+    # 1 - 9
+    expect(is_roman_numeral?("I")).to eq true
+    expect(is_roman_numeral?("II")).to eq true
+    expect(is_roman_numeral?("III")).to eq true
+    expect(is_roman_numeral?("IV")).to eq true
+    expect(is_roman_numeral?("V")).to eq true
+    expect(is_roman_numeral?("VI")).to eq true
+    expect(is_roman_numeral?("VII")).to eq true
+    expect(is_roman_numeral?("VIII")).to eq true
+    expect(is_roman_numeral?("IX")).to eq true
+
+    # 10, 20, 30, 40, 50, 60, 70, 80, 90
+    expect(is_roman_numeral?("X")).to eq true
+    expect(is_roman_numeral?("XX")).to eq true
+    expect(is_roman_numeral?("XXX")).to eq true
+    expect(is_roman_numeral?("XL")).to eq true
+    expect(is_roman_numeral?("L")).to eq true
+    expect(is_roman_numeral?("LX")).to eq true
+    expect(is_roman_numeral?("LXX")).to eq true
+    expect(is_roman_numeral?("LXXX")).to eq true
+    expect(is_roman_numeral?("XC")).to eq true
+
+    # 100, 200, 300, 400, 500, 600, 700, 800, 900
+    expect(is_roman_numeral?("C")).to eq true
+    expect(is_roman_numeral?("CC")).to eq true
+    expect(is_roman_numeral?("CCC")).to eq true
+    expect(is_roman_numeral?("CD")).to eq true
+    expect(is_roman_numeral?("D")).to eq true
+    expect(is_roman_numeral?("DC")).to eq true
+    expect(is_roman_numeral?("DCC")).to eq true
+    expect(is_roman_numeral?("DCCC")).to eq true
+    expect(is_roman_numeral?("CM")).to eq true
+
+    for i in 1..3999
+      roman = int_to_roman(i)
+      expect(is_roman_numeral?(roman)).to eq true
+      expect(roman_to_int(roman)).to eq i
+    end 
+
+
+    expect(is_roman_numeral?("")).to eq false
+    expect(is_roman_numeral?("IIII")).to eq false
+    expect(is_roman_numeral?("VIIII")).to eq false
+    expect(is_roman_numeral?("VV")).to eq false
+    expect(is_roman_numeral?("VIV")).to eq false
+    expect(is_roman_numeral?("XXXX")).to eq false
+    expect(is_roman_numeral?("LXXXX")).to eq false
+    expect(is_roman_numeral?("LL")).to eq false
+    expect(is_roman_numeral?("A")).to eq false
+    expect(is_roman_numeral?("AI")).to eq false
+    expect(is_roman_numeral?("IA")).to eq false
+  end
   it "Primitive decimal to roman (1 - 9)" do
     expect(int_to_roman(1)).to eq "I"
     expect(int_to_roman(2)).to eq "II"

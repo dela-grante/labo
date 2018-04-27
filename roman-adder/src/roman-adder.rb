@@ -51,6 +51,52 @@ def main
   0
 end
 
+def is_roman_numeral?(roman)
+  entry_VI = {"I" => 1, "V" => 4}
+  entry_LXVI = entry_VI.merge({"X" => 7, "L" => 10})
+  entry_DCLXVI = entry_LXVI.merge({"C" => 13, "D" => 16})
+
+  state_table = [
+                 entry_VI, # S0
+                 {"I" => 2, "V" => 3, "X" => 3}, # S1
+                 {"I" => 3}, # S2
+                 {}, # S3
+                 {"I" => 5}, # S4
+                 {"I" => 2}, # S5
+
+                 entry_LXVI, # S6
+                 {"X" => 8, "L" => 9, "C" => 9}.merge!(entry_VI), # S7
+                 {"X" => 9}.merge!(entry_VI), # S8
+                 {}.merge!(entry_VI), # S9
+                 {"X" => 11}.merge!(entry_VI), # S10
+                 {"X" => 8}.merge!(entry_VI), # S11
+
+                 entry_DCLXVI, # S12
+                 {"C" => 14, "D" => 15, "M" => 15}.merge!(entry_LXVI), # S13
+                 {"C" => 15, "X" => 7}.merge!(entry_LXVI), # S14
+                 {"X" => 7}.merge!(entry_LXVI), # S15
+                 {"C" => 17, "X" => 7}.merge!(entry_LXVI), # S16
+                 {"C" => 14, "X" => 7}.merge!(entry_LXVI), # S17
+
+                 {"M" => 19}.merge!(entry_DCLXVI), # S18
+                 {"M" => 20}.merge!(entry_DCLXVI), # S19
+                 {"M" => 21}.merge!(entry_DCLXVI), # S20
+                 {}.merge!(entry_DCLXVI), # S21
+                ]
+  state_accept = [false, true, true, true, true, true,
+                 false, true, true, true, true, true,
+                 false, true, true, true, true, true,
+                 false, true, true, true]
+
+  state = 18
+  roman.chars { |c|
+    state = state_table[state][c]
+    return false if state.nil?
+  }
+
+  state_accept[state]
+end
+
 def int_to_roman(num)
   raise ArgumentError if num < 1 || num > 3999
   r1000 = ["", "M", "MM", "MMM"]

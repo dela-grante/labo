@@ -5,6 +5,16 @@ require 'rspec'
 require_relative '../src/roman-adder'
 
 RSpec.describe do
+  it "RomanNumeral class" do
+    r1 = RomanNumeral.new(1)
+    expect(r1.get_number()).to eq 1
+    expect(r1.get_roman()).to eq "I"
+
+    r2 = RomanNumeral.new_from_roman("I")
+    expect(r2.get_number()).to eq 1
+    expect(r2.get_roman()).to eq "I"
+  end
+
   it "Acceptance check for all roman numerals" do
     # 1 - 9
     expect(is_roman_numeral?("I")).to eq true

@@ -51,6 +51,130 @@ def main
   0
 end
 
+class RomanNumeral
+  R1000 = ["", "M", "MM", "MMM"]
+  R100 = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"]
+  R10 = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"]
+  R1 = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
+
+  ENTRY_VI = {"I" => 1, "V" => 4}
+  ENTRY_LXVI = ENTRY_VI.merge({"X" => 7, "L" => 10})
+  ENTRY_DCLXVI = ENTRY_LXVI.merge({"C" => 13, "D" => 16})
+
+  STATE_TABLE = [
+                 ENTRY_VI, # S0
+                 {"I" => 2, "V" => 3, "X" => 3}, # S1
+                 {"I" => 3}, # S2
+                 {}, # S3
+                 {"I" => 5}, # S4
+                 {"I" => 2}, # S5
+
+                 ENTRY_LXVI, # S6
+                 {"X" => 8, "L" => 9, "C" => 9}.merge!(ENTRY_VI), # S7
+                 {"X" => 9}.merge!(ENTRY_VI), # S8
+                 {}.merge!(ENTRY_VI), # S9
+                 {"X" => 11}.merge!(ENTRY_VI), # S10
+                 {"X" => 8}.merge!(ENTRY_VI), # S11
+
+                 ENTRY_DCLXVI, # S12
+                 {"C" => 14, "D" => 15, "M" => 15}.merge!(ENTRY_LXVI), # S13
+                 {"C" => 15, "X" => 7}.merge!(ENTRY_LXVI), # S14
+                 {"X" => 7}.merge!(ENTRY_LXVI), # S15
+                 {"C" => 17, "X" => 7}.merge!(ENTRY_LXVI), # S16
+                 {"C" => 14, "X" => 7}.merge!(ENTRY_LXVI), # S17
+
+                 {"M" => 19}.merge!(ENTRY_DCLXVI), # S18
+                 {"M" => 20}.merge!(ENTRY_DCLXVI), # S19
+                 {"M" => 21}.merge!(ENTRY_DCLXVI), # S20
+                 {}.merge!(ENTRY_DCLXVI), # S21
+                ]
+  STATE_ACCEPT = [false, true, true, true, true, true,
+                  false, true, true, true, true, true,
+                  false, true, true, true, true, true,
+                  false, true, true, true]
+
+  def initialize(number)
+    raise ArgumentError if number < 1 || number > 3999
+    @number = number
+    @roman = RomanNumeral.from_int(number)
+  end
+
+  def self.new_from_roman(roman)
+    raise ArgumentError unless is_roman_numeral?(roman)
+    RomanNumeral.new(to_int(roman))
+  end
+
+  def get_number
+    @number
+  end
+
+  def get_roman
+    @roman
+  end
+
+  def self.from_int(num)
+    roman = ""
+    mod1000 = num.divmod(1000)
+    roman += R1000[mod1000[0]]
+    mod100 = mod1000[1].divmod(100)
+    roman += R100[mod100[0]]
+    mod10 = mod100[1].divmod(10)
+    roman += R10[mod10[0]]
+    roman + R1[mod10[1]]
+  end
+
+  def self.is_roman_numeral?(roman)
+    state = 18
+    roman.chars { |c|
+      state = STATE_TABLE[state][c]
+      return false if state.nil?
+    }
+
+    STATE_ACCEPT[state]
+  end
+
+  def self.to_int(roman)
+    ret = 0
+    last = 1000
+
+    roman.chars { |c|
+      current = _to_int(c)
+      # ret -= last * 2 if last < current
+      # ret += current
+
+      # Cancel the previous addition of the last number and
+      # subtract the number if...
+      ret += current - ((last * 2) * (last - current)[10])
+
+      last = current
+    }
+
+    ret
+  end
+
+  def self._to_int(c)
+    case c
+    when 'I' then
+      1
+    when 'V' then
+      5
+    when 'X' then
+      10
+    when 'L' then
+      50
+    when 'C' then
+      100
+    when 'D' then
+      500
+    when 'M' then
+      1000
+    else
+      raise "Unknown roman numeral \'" + c + "\'"
+    end
+  end
+
+end
+
 def is_roman_numeral?(roman)
   entry_VI = {"I" => 1, "V" => 4}
   entry_LXVI = entry_VI.merge({"X" => 7, "L" => 10})

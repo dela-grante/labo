@@ -97,6 +97,42 @@ def is_roman_numeral?(roman)
   state_accept[state]
 end
 
+def develop(roman)
+  roman.sub("IV", "IIII")
+    .sub("IX", "VIIII")
+    .sub("XL", "XXXX")
+    .sub("XC", "LXXXX")
+    .sub("CD", "CCCC")
+    .sub("CM", "DCCCC")
+end
+
+def fold(roman)
+  roman.sub("VIV", "IX")
+    .sub("LXL", "XC")
+    .sub("DCD", "CM")
+end
+
+def sort_roman_characters(roman)
+  roman.chars.sort_by { |c|
+    case c
+    when 'I' then
+      7
+    when 'V' then
+      6
+    when 'X' then
+      5
+    when 'L' then
+      4
+    when 'C' then
+      3
+    when 'D' then
+      2
+    when 'M' then
+      1
+    end
+  }.join
+end
+
 def int_to_roman(num)
   raise ArgumentError if num < 1 || num > 3999
   r1000 = ["", "M", "MM", "MMM"]
@@ -233,6 +269,38 @@ def shrink2(src, dst2)
  #   puts ret
     ret += src * run
   }
+end
+
+def shrink5_I(roman)
+  shrink5("I", "V").call(roman)
+end
+
+def shrink5_X(roman)
+  shrink5("X", "L").call(roman)
+end
+
+def shrink5_C(roman)
+  shrink5("C", "D").call(roman)
+end
+
+def shrink2_V(roman)
+  shrink2("V", "X").call(roman)
+end
+
+def shrink2_L(roman)
+  shrink2("L", "C").call(roman)
+end
+
+def shrink2_D(roman)
+  shrink2("D", "M").call(roman)
+end
+
+def shrink_all(roman)
+  shrink2_D(shrink5_C(shrink2_L(shrink5_X(shrink2_V(shrink5_I(roman))))))
+end
+
+def add_roman(lhs, rhs)
+  fold(shrink_all(sort_roman_characters(develop(lhs) + develop(rhs))))
 end
 
 main

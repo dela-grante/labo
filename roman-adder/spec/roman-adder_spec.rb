@@ -5,7 +5,7 @@ require 'rspec'
 require_relative '../src/roman-adder'
 
 RSpec.describe do
-  it "1 to 10 Roman numerals to decimal" do
+  it "Acceptance check for all roman numerals" do
     # 1 - 9
     expect(is_roman_numeral?("I")).to eq true
     expect(is_roman_numeral?("II")).to eq true
@@ -39,14 +39,35 @@ RSpec.describe do
     expect(is_roman_numeral?("DCCC")).to eq true
     expect(is_roman_numeral?("CM")).to eq true
 
+    # 1000, 2000, 3000
+    expect(is_roman_numeral?("M")).to eq true
+    expect(is_roman_numeral?("MM")).to eq true
+    expect(is_roman_numeral?("MMM")).to eq true
+
     for i in 1..3999
       roman = int_to_roman(i)
       expect(is_roman_numeral?(roman)).to eq true
       expect(roman_to_int(roman)).to eq i
     end 
 
+    for i in 1..3999
+      roman_i = int_to_roman(i)
+      3.times do
+        j = rand(1..(3999 - i))
+        if j.nil?
+          next
+        end
+        roman_j = int_to_roman(j)
+        roman_sum = add_roman(roman_i, roman_j)
+        expect(is_roman_numeral?(roman_sum)).to eq true
+        expect(roman_to_int(roman_sum)).to eq i + j
+      end
+    end 
 
     expect(is_roman_numeral?("")).to eq false
+    expect(is_roman_numeral?("I ")).to eq false
+    expect(is_roman_numeral?(" I")).to eq false
+    expect(is_roman_numeral?("i")).to eq false
     expect(is_roman_numeral?("IIII")).to eq false
     expect(is_roman_numeral?("VIIII")).to eq false
     expect(is_roman_numeral?("VV")).to eq false
@@ -54,10 +75,43 @@ RSpec.describe do
     expect(is_roman_numeral?("XXXX")).to eq false
     expect(is_roman_numeral?("LXXXX")).to eq false
     expect(is_roman_numeral?("LL")).to eq false
+    expect(is_roman_numeral?("LXL")).to eq false
+    expect(is_roman_numeral?("CCCC")).to eq false
+    expect(is_roman_numeral?("DCCCC")).to eq false
+    expect(is_roman_numeral?("DD")).to eq false
+    expect(is_roman_numeral?("DCD")).to eq false
+    expect(is_roman_numeral?("MMMM")).to eq false
+
     expect(is_roman_numeral?("A")).to eq false
     expect(is_roman_numeral?("AI")).to eq false
     expect(is_roman_numeral?("IA")).to eq false
   end
+
+  it "Develop subtractions" do
+    expect(develop("IV")).to eq "IIII"
+    expect(develop("IX")).to eq "VIIII"
+    expect(develop("XL")).to eq "XXXX"
+    expect(develop("XC")).to eq "LXXXX"
+    expect(develop("CD")).to eq "CCCC"
+    expect(develop("CM")).to eq "DCCCC"
+
+    expect(develop("XIV")).to eq "XIIII"
+    expect(develop("XIX")).to eq "XVIIII"
+
+  end
+
+  it "Fold invalid subtraction" do
+    expect(fold("VIV")).to eq "IX"
+    expect(fold("LXL")).to eq "XC"
+    expect(fold("DCD")).to eq "CM"
+    expect(fold("DCDLXLVIV")).to eq "CMXCIX"
+  end
+
+  it "Sort roman numeral characters" do
+    expect(sort_roman_characters("IIVXXLCCDMM")).to eq "MMDCCLXXVII"
+    expect(sort_roman_characters("MDCLXVI"+"MDCLXVI")).to eq "MMDDCCLLXXVVII"
+  end
+
   it "Primitive decimal to roman (1 - 9)" do
     expect(int_to_roman(1)).to eq "I"
     expect(int_to_roman(2)).to eq "II"
@@ -174,137 +228,116 @@ RSpec.describe do
   #   expect{ roman_to_int("XM") }.to raise_error(RuntimeError) # 10 - 1000 = -990
   # end
 
-  shrink5_I = shrink5("I", "V")
-  shrink5_X = shrink5("X", "L")
-  shrink5_C = shrink5("C", "D")
-
   it "Shrink rule (I)" do
-    expect(shrink5_I.call("I")).to eq "I"
-    expect(shrink5_I.call("II")).to eq "II"
-    expect(shrink5_I.call("III")).to eq "III"
-    expect(shrink5_I.call("IIII")).to eq "IV"
-    expect(shrink5_I.call("IIIII")).to eq "V"
-    expect(shrink5_I.call("IIIIII")).to eq "VI"
-    expect(shrink5_I.call("IIIIIII")).to eq "VII"
-    expect(shrink5_I.call("IIIIIIII")).to eq "VIII"
-    expect(shrink5_I.call("IIIIIIIII")).to eq "VIV"
-    expect(shrink5_I.call("IIIIIIIIII")).to eq "VV"
+    expect(shrink5_I("I")).to eq "I"
+    expect(shrink5_I("II")).to eq "II"
+    expect(shrink5_I("III")).to eq "III"
+    expect(shrink5_I("IIII")).to eq "IV"
+    expect(shrink5_I("IIIII")).to eq "V"
+    expect(shrink5_I("IIIIII")).to eq "VI"
+    expect(shrink5_I("IIIIIII")).to eq "VII"
+    expect(shrink5_I("IIIIIIII")).to eq "VIII"
+    expect(shrink5_I("IIIIIIIII")).to eq "VIV"
+    expect(shrink5_I("IIIIIIIIII")).to eq "VV"
   end
 
   it "Shrink rule (X)" do
-    expect(shrink5_X.call("X")).to eq "X"
-    expect(shrink5_X.call("XX")).to eq "XX"
-    expect(shrink5_X.call("XXX")).to eq "XXX"
-    expect(shrink5_X.call("XXXX")).to eq "XL"
-    expect(shrink5_X.call("XXXXX")).to eq "L"
-    expect(shrink5_X.call("XXXXXX")).to eq "LX"
-    expect(shrink5_X.call("XXXXXXX")).to eq "LXX"
-    expect(shrink5_X.call("XXXXXXXX")).to eq "LXXX"
-    expect(shrink5_X.call("XXXXXXXXX")).to eq "LXL"
-    expect(shrink5_X.call("XXXXXXXXXX")).to eq "LL"
+    expect(shrink5_X("X")).to eq "X"
+    expect(shrink5_X("XX")).to eq "XX"
+    expect(shrink5_X("XXX")).to eq "XXX"
+    expect(shrink5_X("XXXX")).to eq "XL"
+    expect(shrink5_X("XXXXX")).to eq "L"
+    expect(shrink5_X("XXXXXX")).to eq "LX"
+    expect(shrink5_X("XXXXXXX")).to eq "LXX"
+    expect(shrink5_X("XXXXXXXX")).to eq "LXXX"
+    expect(shrink5_X("XXXXXXXXX")).to eq "LXL"
+    expect(shrink5_X("XXXXXXXXXX")).to eq "LL"
   end
 
   it "Shrink rule (C)" do
-    expect(shrink5_C.call("C")).to eq "C"
-    expect(shrink5_C.call("CC")).to eq "CC"
-    expect(shrink5_C.call("CCC")).to eq "CCC"
-    expect(shrink5_C.call("CCCC")).to eq "CD"
-    expect(shrink5_C.call("CCCCC")).to eq "D"
-    expect(shrink5_C.call("CCCCCC")).to eq "DC"
-    expect(shrink5_C.call("CCCCCCC")).to eq "DCC"
-    expect(shrink5_C.call("CCCCCCCC")).to eq "DCCC"
-    expect(shrink5_C.call("CCCCCCCCC")).to eq "DCD"
-    expect(shrink5_C.call("CCCCCCCCCC")).to eq "DD"
+    expect(shrink5_C("C")).to eq "C"
+    expect(shrink5_C("CC")).to eq "CC"
+    expect(shrink5_C("CCC")).to eq "CCC"
+    expect(shrink5_C("CCCC")).to eq "CD"
+    expect(shrink5_C("CCCCC")).to eq "D"
+    expect(shrink5_C("CCCCCC")).to eq "DC"
+    expect(shrink5_C("CCCCCCC")).to eq "DCC"
+    expect(shrink5_C("CCCCCCCC")).to eq "DCCC"
+    expect(shrink5_C("CCCCCCCCC")).to eq "DCD"
+    expect(shrink5_C("CCCCCCCCCC")).to eq "DD"
   end
 
-  shrink2_V = shrink2("V", "X")
-  shrink2_L = shrink2("L", "C")
-  shrink2_D = shrink2("D", "M")
-
   it "Shrink rule (V)" do
-    expect(shrink2_V.call("V")).to eq "V"
-    expect(shrink2_V.call("VV")).to eq "X"
-    expect(shrink2_V.call("VVV")).to eq "XV"
-    expect(shrink2_V.call("VVVV")).to eq "XX"
-    expect(shrink2_V.call("VVVVV")).to eq "XXV"
-    expect(shrink2_V.call("VVVVVV")).to eq "XXX"
-    expect(shrink2_V.call("VVVVVVV")).to eq "XXXV"
-    expect(shrink2_V.call("VVVVVVVV")).to eq "XXXX"
-    expect(shrink2_V.call("VVVVVVVVV")).to eq "XXXXV"
-    expect(shrink2_V.call("VVVVVVVVVV")).to eq "XXXXX"
+    expect(shrink2_V("V")).to eq "V"
+    expect(shrink2_V("VV")).to eq "X"
+    expect(shrink2_V("VVV")).to eq "XV"
+    expect(shrink2_V("VVVV")).to eq "XX"
+    expect(shrink2_V("VVVVV")).to eq "XXV"
+    expect(shrink2_V("VVVVVV")).to eq "XXX"
+    expect(shrink2_V("VVVVVVV")).to eq "XXXV"
+    expect(shrink2_V("VVVVVVVV")).to eq "XXXX"
+    expect(shrink2_V("VVVVVVVVV")).to eq "XXXXV"
+    expect(shrink2_V("VVVVVVVVVV")).to eq "XXXXX"
   end
 
   it "Shrink rule (L)" do
-    expect(shrink2_L.call("L")).to eq "L"
-    expect(shrink2_L.call("LL")).to eq "C"
-    expect(shrink2_L.call("LLL")).to eq "CL"
-    expect(shrink2_L.call("LLLL")).to eq "CC"
-    expect(shrink2_L.call("LLLLL")).to eq "CCL"
-    expect(shrink2_L.call("LLLLLL")).to eq "CCC"
-    expect(shrink2_L.call("LLLLLLL")).to eq "CCCL"
-    expect(shrink2_L.call("LLLLLLLL")).to eq "CCCC"
-    expect(shrink2_L.call("LLLLLLLLL")).to eq "CCCCL"
-    expect(shrink2_L.call("LLLLLLLLLL")).to eq "CCCCC"
+    expect(shrink2_L("L")).to eq "L"
+    expect(shrink2_L("LL")).to eq "C"
+    expect(shrink2_L("LLL")).to eq "CL"
+    expect(shrink2_L("LLLL")).to eq "CC"
+    expect(shrink2_L("LLLLL")).to eq "CCL"
+    expect(shrink2_L("LLLLLL")).to eq "CCC"
+    expect(shrink2_L("LLLLLLL")).to eq "CCCL"
+    expect(shrink2_L("LLLLLLLL")).to eq "CCCC"
+    expect(shrink2_L("LLLLLLLLL")).to eq "CCCCL"
+    expect(shrink2_L("LLLLLLLLLL")).to eq "CCCCC"
   end
 
   it "Shrink rule (D)" do
-    expect(shrink2_D.call("D")).to eq "D"
-    expect(shrink2_D.call("DD")).to eq "M"
-    expect(shrink2_D.call("DDD")).to eq "MD"
-    expect(shrink2_D.call("DDDD")).to eq "MM"
-    expect(shrink2_D.call("DDDDD")).to eq "MMD"
-    expect(shrink2_D.call("DDDDDD")).to eq "MMM"
-    expect(shrink2_D.call("DDDDDDD")).to eq "MMMD"
-    expect(shrink2_D.call("DDDDDDDD")).to eq "MMMM"
-    expect(shrink2_D.call("DDDDDDDDD")).to eq "MMMMD"
-    expect(shrink2_D.call("DDDDDDDDDD")).to eq "MMMMM"
+    expect(shrink2_D("D")).to eq "D"
+    expect(shrink2_D("DD")).to eq "M"
+    expect(shrink2_D("DDD")).to eq "MD"
+    expect(shrink2_D("DDDD")).to eq "MM"
+    expect(shrink2_D("DDDDD")).to eq "MMD"
+    expect(shrink2_D("DDDDDD")).to eq "MMM"
+    expect(shrink2_D("DDDDDDD")).to eq "MMMD"
+    expect(shrink2_D("DDDDDDDD")).to eq "MMMM"
+    expect(shrink2_D("DDDDDDDDD")).to eq "MMMMD"
+    expect(shrink2_D("DDDDDDDDDD")).to eq "MMMMM"
   end
-
-  shrink_all = lambda { |roman|
-    shrink2_D.call(shrink5_C.call(shrink2_L.call(shrink5_X.call(shrink2_V.call(shrink5_I.call(roman))))))
-  }
 
   it "Shrink rule (combination)" do
-    expect(shrink_all.call("I" * 10)).to eq "X"
-    expect(shrink_all.call("I" * 15)).to eq "XV"
-    expect(shrink_all.call("I" * 20)).to eq "XX"
-    expect(shrink_all.call("I" * 25)).to eq "XXV"
-    expect(shrink_all.call("I" * 30)).to eq "XXX"
-    expect(shrink_all.call("I" * 35)).to eq "XXXV"
-    expect(shrink_all.call("I" * 40)).to eq "XL"
-    expect(shrink_all.call("I" * 45)).to eq "XLV"
-    expect(shrink_all.call("I" * 50)).to eq "L"
-    expect(shrink_all.call("I" * 100)).to eq "C"
-    expect(shrink_all.call("I" * 500)).to eq "D"
-    expect(shrink_all.call("I" * 1000)).to eq "M"
+    expect(shrink_all("I" * 10)).to eq "X"
+    expect(shrink_all("I" * 15)).to eq "XV"
+    expect(shrink_all("I" * 20)).to eq "XX"
+    expect(shrink_all("I" * 25)).to eq "XXV"
+    expect(shrink_all("I" * 30)).to eq "XXX"
+    expect(shrink_all("I" * 35)).to eq "XXXV"
+    expect(shrink_all("I" * 40)).to eq "XL"
+    expect(shrink_all("I" * 45)).to eq "XLV"
+    expect(shrink_all("I" * 50)).to eq "L"
+    expect(shrink_all("I" * 100)).to eq "C"
+    expect(shrink_all("I" * 500)).to eq "D"
+    expect(shrink_all("I" * 1000)).to eq "M"
 
-    expect(shrink_all.call("I" * 11)).to eq "XI"
-    expect(shrink_all.call("I" * 16)).to eq "XVI"
-    expect(shrink_all.call("I" * 21)).to eq "XXI"
-    expect(shrink_all.call("I" * 26)).to eq "XXVI"
-    expect(shrink_all.call("I" * 31)).to eq "XXXI"
-    expect(shrink_all.call("I" * 36)).to eq "XXXVI"
-    expect(shrink_all.call("I" * 41)).to eq "XLI"
-    expect(shrink_all.call("I" * 46)).to eq "XLVI"
-    expect(shrink_all.call("I" * 51)).to eq "LI"
-    expect(shrink_all.call("I" * 101)).to eq "CI"
-    expect(shrink_all.call("I" * 501)).to eq "DI"
+    expect(shrink_all("I" * 11)).to eq "XI"
+    expect(shrink_all("I" * 16)).to eq "XVI"
+    expect(shrink_all("I" * 21)).to eq "XXI"
+    expect(shrink_all("I" * 26)).to eq "XXVI"
+    expect(shrink_all("I" * 31)).to eq "XXXI"
+    expect(shrink_all("I" * 36)).to eq "XXXVI"
+    expect(shrink_all("I" * 41)).to eq "XLI"
+    expect(shrink_all("I" * 46)).to eq "XLVI"
+    expect(shrink_all("I" * 51)).to eq "LI"
+    expect(shrink_all("I" * 101)).to eq "CI"
+    expect(shrink_all("I" * 501)).to eq "DI"
 
-    expect(shrink_all.call("I" * 14)).to eq "XIV"
-#    expect(shrink_all.call("I" * 19)).to eq "XIX"
-    expect(shrink_all.call("I" * 24)).to eq "XXIV"
-#    expect(shrink_all.call("I" * 29)).to eq "XXIX"
-    expect(shrink_all.call("I" * 34)).to eq "XXXIV"
-#    expect(shrink_all.call("I" * 39)).to eq "XXXIX"
-    expect(shrink_all.call("I" * 44)).to eq "XLIV"
-#    expect(shrink_all.call("I" * 49)).to eq "XLIX"
-    expect(shrink_all.call("I" * 54)).to eq "LIV"
-    expect(shrink_all.call("I" * 104)).to eq "CIV"
-    expect(shrink_all.call("I" * 504)).to eq "DIV"
-
-
-
-
+    expect(shrink_all("I" * 14)).to eq "XIV"
+    expect(shrink_all("I" * 24)).to eq "XXIV"
+    expect(shrink_all("I" * 34)).to eq "XXXIV"
+    expect(shrink_all("I" * 44)).to eq "XLIV"
+    expect(shrink_all("I" * 54)).to eq "LIV"
+    expect(shrink_all("I" * 104)).to eq "CIV"
+    expect(shrink_all("I" * 504)).to eq "DIV"
   end
-
 end

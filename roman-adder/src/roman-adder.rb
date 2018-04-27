@@ -97,10 +97,9 @@ class RomanNumeral
   def +(rhs)
     RomanNumeral.new_from_roman(
       RomanNumeralUtil.fold(
-        RomanNumeralUtil.shrink_all(
-          RomanNumeralUtil.sort_roman_characters(
-            RomanNumeralUtil.develop(@roman) +
-            RomanNumeralUtil.develop(rhs.get_roman())))))
+        RomanNumeralUtil.sort_digits(
+          RomanNumeralUtil.develop(@roman) +
+          RomanNumeralUtil.develop(rhs.get_roman()))))
   end
 
   private
@@ -179,40 +178,34 @@ class RomanNumeralUtil
   end
 
   def self.fold(roman)
-    roman.sub("VIV", "IX")
+    combine(roman)
+      .sub("VIV", "IX")
       .sub("LXL", "XC")
       .sub("DCD", "CM")
   end
 
 
-  def self.shrink_all(roman)
-    shrink2_D(shrink5_C(shrink2_L(shrink5_X(shrink2_V(shrink5_I(roman))))))
-  end
-
-  def self.sort_roman_characters(roman)
+  def self.sort_digits(roman)
     roman.chars.sort_by { |c|
       case c
-      when 'I' then
-        7
-      when 'V' then
-        6
-      when 'X' then
-        5
-      when 'L' then
-        4
-      when 'C' then
-        3
-      when 'D' then
-        2
-      when 'M' then
-        1
+      when 'I' then 7
+      when 'V' then 6
+      when 'X' then 5
+      when 'L' then 4
+      when 'C' then 3
+      when 'D' then 2
+      when 'M' then 1
       end
     }.join
   end
 
   private
 
-  def self.shrink5(src, dst5)
+  def self.combine(roman)
+    combine2_D(combine5_C(combine2_L(combine5_X(combine2_V(combine5_I(roman))))))
+  end
+
+  def self.combine5(src, dst5)
     lambda { |roman|
       dst4 = src + dst5
       ret = ""
@@ -236,7 +229,7 @@ class RomanNumeralUtil
     }
   end
 
-  def self.shrink2(src, dst2)
+  def self.combine2(src, dst2)
     lambda { |roman|
       ret = ""
       run = 0
@@ -259,28 +252,28 @@ class RomanNumeralUtil
     }
   end
 
-  def self.shrink5_I(roman)
-    shrink5("I", "V").call(roman)
+  def self.combine5_I(roman)
+    combine5("I", "V").call(roman)
   end
 
-  def self.shrink5_X(roman)
-    shrink5("X", "L").call(roman)
+  def self.combine5_X(roman)
+    combine5("X", "L").call(roman)
   end
 
-  def self.shrink5_C(roman)
-    shrink5("C", "D").call(roman)
+  def self.combine5_C(roman)
+    combine5("C", "D").call(roman)
   end
 
-  def self.shrink2_V(roman)
-    shrink2("V", "X").call(roman)
+  def self.combine2_V(roman)
+    combine2("V", "X").call(roman)
   end
 
-  def self.shrink2_L(roman)
-    shrink2("L", "C").call(roman)
+  def self.combine2_L(roman)
+    combine2("L", "C").call(roman)
   end
 
-  def self.shrink2_D(roman)
-    shrink2("D", "M").call(roman)
+  def self.combine2_D(roman)
+    combine2("D", "M").call(roman)
   end
 end
 

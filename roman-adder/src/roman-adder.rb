@@ -76,15 +76,21 @@ class RomanNumeral
                   false, true, true, true]
 
   def initialize(number)
-    raise ArgumentError if number < 1 || number > 3999
-    @number = number
-    @roman = RomanNumeral.from_int(number)
+    if number.kind_of?(Integer)
+      raise ArgumentError if number < 1 || number > 3999
+      @number = number
+      @roman = from_int(number)
+    else
+      raise ArgumentError unless is_roman_numeral?(number)
+      @number = to_int(number)
+      @roman = number
+    end
   end
 
-  def self.new_from_roman(roman)
-    raise ArgumentError unless is_roman_numeral?(roman)
-    RomanNumeral.new(to_int(roman))
-  end
+  # def self.new_from_roman(roman)
+  #   raise ArgumentError unless is_roman_numeral?(roman)
+  #   RomanNumeral.new(to_int(roman))
+  # end
 
   def get_number
     @number
@@ -95,7 +101,11 @@ class RomanNumeral
   end
 
   def +(rhs)
-    RomanNumeral.new_from_roman(
+    if rhs.kind_of?(Integer)
+      rhs = RomanNumeral.new(rhs)
+    end
+
+    RomanNumeral.new(
       RomanNumeralUtil.fold(
         RomanNumeralUtil.sort_digits(
           RomanNumeralUtil.develop(@roman) +
@@ -104,7 +114,7 @@ class RomanNumeral
 
   private
 
-  def self.from_int(num)
+  def from_int(num)
     roman = ""
     mod1000 = num.divmod(1000)
     roman += R1000[mod1000[0]]
@@ -115,7 +125,7 @@ class RomanNumeral
     roman + R1[mod10[1]]
   end
 
-  def self.to_int(roman)
+  def to_int(roman)
     ret = 0
     last = 1000
 
@@ -134,7 +144,7 @@ class RomanNumeral
     ret
   end
 
-  def self._to_int(c)
+  def _to_int(c)
     case c
     when 'I' then
       1
@@ -155,7 +165,7 @@ class RomanNumeral
     end
   end
 
-  def self.is_roman_numeral?(roman)
+  def is_roman_numeral?(roman)
     state = 18
     roman.chars { |c|
       state = STATE_TABLE[state][c]

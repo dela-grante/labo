@@ -10,54 +10,58 @@ RSpec.describe do
     expect(r1.get_number()).to eq 1
     expect(r1.get_roman()).to eq "I"
 
-    r2 = RomanNumeral.new_from_roman("I")
+    r2 = RomanNumeral.new("I")
     expect(r2.get_number()).to eq 1
     expect(r2.get_roman()).to eq "I"
 
     r_sum = RomanNumeral.new(10) + RomanNumeral.new(9)
     expect(r_sum.get_number()).to eq 19
     expect(r_sum.get_roman()).to eq "XIX"
+
+    r_sum2 = RomanNumeral.new(10) + 3004
+    expect(r_sum2.get_number()).to eq 3014
+    expect(r_sum2.get_roman()).to eq "MMMXIV"
   end
 
   it "Acceptance check for all roman numerals" do
     # 1 - 9
-    expect{ RomanNumeral.new_from_roman("I") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("I") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("II") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("III") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("IV") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("V") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("VI") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("VII") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("VIII") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("IX") }.not_to raise_error
+    expect{ RomanNumeral.new("I") }.not_to raise_error
+    expect{ RomanNumeral.new("I") }.not_to raise_error
+    expect{ RomanNumeral.new("II") }.not_to raise_error
+    expect{ RomanNumeral.new("III") }.not_to raise_error
+    expect{ RomanNumeral.new("IV") }.not_to raise_error
+    expect{ RomanNumeral.new("V") }.not_to raise_error
+    expect{ RomanNumeral.new("VI") }.not_to raise_error
+    expect{ RomanNumeral.new("VII") }.not_to raise_error
+    expect{ RomanNumeral.new("VIII") }.not_to raise_error
+    expect{ RomanNumeral.new("IX") }.not_to raise_error
 
     # 10, 20, 30, 40, 50, 60, 70, 80, 90
-    expect{ RomanNumeral.new_from_roman("X") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("XX") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("XXX") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("XL") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("L") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("LX") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("LXX") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("LXXX") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("XC") }.not_to raise_error
+    expect{ RomanNumeral.new("X") }.not_to raise_error
+    expect{ RomanNumeral.new("XX") }.not_to raise_error
+    expect{ RomanNumeral.new("XXX") }.not_to raise_error
+    expect{ RomanNumeral.new("XL") }.not_to raise_error
+    expect{ RomanNumeral.new("L") }.not_to raise_error
+    expect{ RomanNumeral.new("LX") }.not_to raise_error
+    expect{ RomanNumeral.new("LXX") }.not_to raise_error
+    expect{ RomanNumeral.new("LXXX") }.not_to raise_error
+    expect{ RomanNumeral.new("XC") }.not_to raise_error
 
     # 100, 200, 300, 400, 500, 600, 700, 800, 900
-    expect{ RomanNumeral.new_from_roman("C") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("CC") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("CCC") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("CD") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("D") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("DC") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("DCC") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("DCCC") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("CM") }.not_to raise_error
+    expect{ RomanNumeral.new("C") }.not_to raise_error
+    expect{ RomanNumeral.new("CC") }.not_to raise_error
+    expect{ RomanNumeral.new("CCC") }.not_to raise_error
+    expect{ RomanNumeral.new("CD") }.not_to raise_error
+    expect{ RomanNumeral.new("D") }.not_to raise_error
+    expect{ RomanNumeral.new("DC") }.not_to raise_error
+    expect{ RomanNumeral.new("DCC") }.not_to raise_error
+    expect{ RomanNumeral.new("DCCC") }.not_to raise_error
+    expect{ RomanNumeral.new("CM") }.not_to raise_error
 
     # 1000, 2000, 3000
-    expect{ RomanNumeral.new_from_roman("M") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("MM") }.not_to raise_error
-    expect{ RomanNumeral.new_from_roman("MMM") }.not_to raise_error
+    expect{ RomanNumeral.new("M") }.not_to raise_error
+    expect{ RomanNumeral.new("MM") }.not_to raise_error
+    expect{ RomanNumeral.new("MMM") }.not_to raise_error
 
     for i in 1..3999
       roman = RomanNumeral.new(i)
@@ -79,27 +83,27 @@ RSpec.describe do
       end 
     }.not_to raise_error
 
-    expect{ RomanNumeral.new_from_roman("") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("I ") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman(" I") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("i") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("IIII") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("VIIII") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("VV") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("VIV") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("XXXX") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("LXXXX") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("LL") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("LXL") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("CCCC") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("DCCCC") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("DD") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("DCD") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("MMMM") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("I ") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new(" I") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("i") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("IIII") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("VIIII") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("VV") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("VIV") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("XXXX") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("LXXXX") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("LL") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("LXL") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("CCCC") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("DCCCC") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("DD") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("DCD") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("MMMM") }.to raise_error(ArgumentError)
 
-    expect{ RomanNumeral.new_from_roman("A") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("AI") }.to raise_error(ArgumentError)
-    expect{ RomanNumeral.new_from_roman("IA") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("A") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("AI") }.to raise_error(ArgumentError)
+    expect{ RomanNumeral.new("IA") }.to raise_error(ArgumentError)
   end
 
   it "Develop subtractions" do
@@ -183,53 +187,53 @@ RSpec.describe do
   end
 
   it "1-digit Roman numerals to decimal" do
-    expect(RomanNumeral.new_from_roman("I").get_number).to eq 1
-    expect(RomanNumeral.new_from_roman("V").get_number).to eq 5
-    expect(RomanNumeral.new_from_roman("X").get_number).to eq 10
-    expect(RomanNumeral.new_from_roman("L").get_number).to eq 50
-    expect(RomanNumeral.new_from_roman("C").get_number).to eq 100
-    expect(RomanNumeral.new_from_roman("D").get_number).to eq 500
-    expect(RomanNumeral.new_from_roman("M").get_number).to eq 1000
-    expect{ RomanNumeral.new_from_roman("1") }.to raise_error(ArgumentError)
+    expect(RomanNumeral.new("I").get_number).to eq 1
+    expect(RomanNumeral.new("V").get_number).to eq 5
+    expect(RomanNumeral.new("X").get_number).to eq 10
+    expect(RomanNumeral.new("L").get_number).to eq 50
+    expect(RomanNumeral.new("C").get_number).to eq 100
+    expect(RomanNumeral.new("D").get_number).to eq 500
+    expect(RomanNumeral.new("M").get_number).to eq 1000
+    expect{ RomanNumeral.new("1") }.to raise_error(ArgumentError)
   end
   it "1 to 10 Roman numerals to decimal" do
-    expect(RomanNumeral.new_from_roman("I").get_number).to eq 1
-    expect(RomanNumeral.new_from_roman("II").get_number).to eq 2
-    expect(RomanNumeral.new_from_roman("III").get_number).to eq 3
-    expect(RomanNumeral.new_from_roman("IV").get_number).to eq 4
-    expect(RomanNumeral.new_from_roman("V").get_number).to eq 5
-    expect(RomanNumeral.new_from_roman("VI").get_number).to eq 6
-    expect(RomanNumeral.new_from_roman("VII").get_number).to eq 7
-    expect(RomanNumeral.new_from_roman("VIII").get_number).to eq 8
-    expect(RomanNumeral.new_from_roman("IX").get_number).to eq 9
-    expect(RomanNumeral.new_from_roman("X").get_number).to eq 10
+    expect(RomanNumeral.new("I").get_number).to eq 1
+    expect(RomanNumeral.new("II").get_number).to eq 2
+    expect(RomanNumeral.new("III").get_number).to eq 3
+    expect(RomanNumeral.new("IV").get_number).to eq 4
+    expect(RomanNumeral.new("V").get_number).to eq 5
+    expect(RomanNumeral.new("VI").get_number).to eq 6
+    expect(RomanNumeral.new("VII").get_number).to eq 7
+    expect(RomanNumeral.new("VIII").get_number).to eq 8
+    expect(RomanNumeral.new("IX").get_number).to eq 9
+    expect(RomanNumeral.new("X").get_number).to eq 10
   end
   it "Some difficult pattern of Roman numerals to decimal" do
-    expect(RomanNumeral.new_from_roman("XII").get_number).to eq 12
-    expect(RomanNumeral.new_from_roman("XXIV").get_number).to eq 24
-    expect(RomanNumeral.new_from_roman("XLII").get_number).to eq 42
-    expect(RomanNumeral.new_from_roman("XLIX").get_number).to eq 49
-    expect(RomanNumeral.new_from_roman("LXXXIX").get_number).to eq 89
-    expect(RomanNumeral.new_from_roman("CCXCIX").get_number).to eq 299
-    expect(RomanNumeral.new_from_roman("CDXCIII").get_number).to eq 493
-    expect(RomanNumeral.new_from_roman("MCMLX").get_number).to eq 1960
-    expect(RomanNumeral.new_from_roman("MMXVIII").get_number).to eq 2018
-    expect(RomanNumeral.new_from_roman("MMMCMXCIX").get_number).to eq 3999
+    expect(RomanNumeral.new("XII").get_number).to eq 12
+    expect(RomanNumeral.new("XXIV").get_number).to eq 24
+    expect(RomanNumeral.new("XLII").get_number).to eq 42
+    expect(RomanNumeral.new("XLIX").get_number).to eq 49
+    expect(RomanNumeral.new("LXXXIX").get_number).to eq 89
+    expect(RomanNumeral.new("CCXCIX").get_number).to eq 299
+    expect(RomanNumeral.new("CDXCIII").get_number).to eq 493
+    expect(RomanNumeral.new("MCMLX").get_number).to eq 1960
+    expect(RomanNumeral.new("MMXVIII").get_number).to eq 2018
+    expect(RomanNumeral.new("MMMCMXCIX").get_number).to eq 3999
   end
 
   it "2-digit Roman numerals to decimal" do
-    expect(RomanNumeral.new_from_roman("II").get_number).to eq 2
-    expect(RomanNumeral.new_from_roman("XX").get_number).to eq 20
-    expect(RomanNumeral.new_from_roman("CC").get_number).to eq 200
-    expect(RomanNumeral.new_from_roman("MM").get_number).to eq 2000
+    expect(RomanNumeral.new("II").get_number).to eq 2
+    expect(RomanNumeral.new("XX").get_number).to eq 20
+    expect(RomanNumeral.new("CC").get_number).to eq 200
+    expect(RomanNumeral.new("MM").get_number).to eq 2000
   end
   it "Subtraction rule" do
-    expect(RomanNumeral.new_from_roman("IV").get_number).to eq 4 # 1 - 5 = -4
-    expect(RomanNumeral.new_from_roman("IX").get_number).to eq 9 # 1 - 10 = -9
-    expect(RomanNumeral.new_from_roman("XL").get_number).to eq 40 # 10 - 50 = -40
-    expect(RomanNumeral.new_from_roman("XC").get_number).to eq 90 # 10 - 100 = -90
-    expect(RomanNumeral.new_from_roman("CD").get_number).to eq 400 # 100 - 500 = -400
-    expect(RomanNumeral.new_from_roman("CM").get_number).to eq 900 # 100 - 1000 = -900
+    expect(RomanNumeral.new("IV").get_number).to eq 4 # 1 - 5 = -4
+    expect(RomanNumeral.new("IX").get_number).to eq 9 # 1 - 10 = -9
+    expect(RomanNumeral.new("XL").get_number).to eq 40 # 10 - 50 = -40
+    expect(RomanNumeral.new("XC").get_number).to eq 90 # 10 - 100 = -90
+    expect(RomanNumeral.new("CD").get_number).to eq 400 # 100 - 500 = -400
+    expect(RomanNumeral.new("CM").get_number).to eq 900 # 100 - 1000 = -900
   end
 
   it "Combination rule (I)" do

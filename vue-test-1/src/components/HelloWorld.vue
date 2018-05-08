@@ -80,6 +80,7 @@
         </a>
       </li>
     </ul>
+    <h1>{{ msg2 }}</h1>
   </div>
 </template>
 
@@ -88,7 +89,8 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'This is a test Vue project!'
+      msg: 'This is a test Vue project!',
+      msg2: 'This is another message.'
     }
   }
 }

@@ -2,7 +2,7 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <form>
-      <button>New</button>
+      <button v-on:click="addTodo()">New</button>
       <button>Delete</button>
       <p>input: <input type="text" v-model="newTodo"></p>
       <p>task: {{ newTodo }}</p>
@@ -30,6 +30,19 @@ export default {
       ],
       newTodo: ""
     }
+  },
+  methods: {
+    addTodo(event) {
+      let text = this.newTodo && this.newTodo.trim()
+      if (!text) {
+        return
+      }
+      this.todos.push({
+        text: text,
+        done: false
+      })
+      this.newTodo = ''
+    },
   }
 }
 </script>

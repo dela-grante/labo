@@ -8,10 +8,10 @@
       <p>task:</p>
     </form>
     <div class="task-list">
-      <label class="task-list__item"><input type="checkbox"><button>Edit</button>vue-router</label>
-      <label class="task-list__item"><input type="checkbox"><button>Edit</button>vuex</label>
-      <label class="task-list__item"><input type="checkbox"><button>Edit</button>vue-loader</label>
-      <label class="task-list__item--checked"><input type="checkbox"><button>Edit</button>awesome-vue</label>
+      <label class="task-list__item"
+             v-for="(todo, index) in todos" v-bind:key="index">
+        <input type="checkbox"><button>Edit</button>{{ todo.text }}
+        </label>
     </div>
   </div>
 </template>
@@ -21,7 +21,13 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'This is a test Vue project!'
+      msg: 'This is a test Vue project!',
+      todos: [
+        {text: 'vue-router', done: true },
+        {text: 'vuex', done: false },
+        {text: 'vue-loader', done: false },
+        {text: 'awesome-vue', done: true },
+      ]
     }
   }
 }

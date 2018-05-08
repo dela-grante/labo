@@ -28,16 +28,16 @@ export default {
     return {
       msg: 'This is a test Vue project!',
       todos: [
-        {text: 'vue-router', done: true, editing: false },
-        {text: 'vuex', done: false, editing: false },
-        {text: 'vue-loader', done: false, editing: false },
-        {text: 'awesome-vue', done: true, editing: false },
+        { text: 'vue-router', done: true, editing: false },
+        { text: 'vuex', done: false, editing: false },
+        { text: 'vue-loader', done: false, editing: false },
+        { text: 'awesome-vue', done: true, editing: false }
       ],
-      newTodo: ""
+      newTodo: ''
     }
   },
   methods: {
-    addTodo(event) {
+    addTodo (event) {
       let text = this.newTodo && this.newTodo.trim()
       if (!text) {
         return
@@ -49,7 +49,7 @@ export default {
       })
       this.newTodo = ''
     },
-    deleteFinishedTodos(event) {
+    deleteFinishedTodos (event) {
       for (let i = this.todos.length - 1; i >= 0; i--) {
         if (this.todos[i].done) {
           this.todos.splice(i, 1)

@@ -33,21 +33,21 @@ export default {
   data () {
     return {
       form: {
-        // global_id: "",
-        name: "",
-        content: ""
+        global_id: '',
+        name: '',
+        content: ''
       },
       rules: {
         global_id: [
-            { required: true, message: "入力必須です。", trigger: "blur" },
-            // { type: "integer", message: "数字で入力してください。", trigger: "blur" },
-            { len: 10, message: "10桁で入力してください。", trigger: "blur" }
+          { required: true, message: '入力必須です。', trigger: 'blur' },
+          // { type: "integer", message: '数字で入力してください。', trigger: 'blur' },
+          { len: 10, message: '10桁で入力してください。', trigger: 'blur' }
         ],
         name: [
-            { required: true, message: "入力必須です。", trigger: "blur" }
+          { required: true, message: '入力必須です。', trigger: 'blur' }
         ],
         content: [
-            { required: true, message: "入力必須です。", trigger: "blur" }
+          { required: true, message: '入力必須です。', trigger: 'blur' }
         ]
       }
     }

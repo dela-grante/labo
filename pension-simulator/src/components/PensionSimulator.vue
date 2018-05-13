@@ -127,7 +127,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in forecasts" :key="index">
+        <tr v-for="(item, index) in forecasts2" :key="index">
           <td>{{ item.age }}</td>
           <td>{{ item.fiscal_year }}</td>
           <td>{{ item.job_grade }}</td>
@@ -147,6 +147,8 @@
 </template>
 
 <script>
+var _ = require('lodash')
+
 export default {
   data () {
     return {
@@ -158,6 +160,7 @@ export default {
       balance_dc: 150000, // 確定拠出年金（DC）累積
       db_annual_rate_percent: 3.0, // 付与利率（実勢金利連動）
       dc_annual_rate_percent: 2.0, // DC利率
+      forecasts2: [],
       POINT: {
         DB_AND_DC: {
           I5: { DB: 54, DC: 10.476 },
@@ -176,6 +179,11 @@ export default {
       }
     }
   },
+  watch: {
+    forecasts () {
+      // Do nothing.
+    }
+  },
   computed: {
     db_annual_rate () {
       return this.db_annual_rate_percent / 100.0
@@ -184,12 +192,18 @@ export default {
       return this.dc_annual_rate_percent / 100.0
     },
     balance_at_60 () {
-      return this.forecasts[this.forecasts.length - 1].balance_total
+      if (this.forecasts2 && this.forecasts2.length > 0) {
+        return this.forecasts2[this.forecasts2.length - 1].balance_total
+      } else {
+        return null
+      }
     },
     forecasts () {
       if (this.age == null) {
         return null
       }
+      console.log('Updating forecasts...')
+
       let age = this.age
       let fiscal_year = this.fiscal_year - 1
       let job_grade = this.job_grade
@@ -200,37 +214,57 @@ export default {
       let balance_dc = this.balance_dc
       let interest_dc = 0;
 
-      let ret = new Array()
+      this.forecasts2 = []
 
-      while (age <= 60) {
-        ret.push({
-          age,
-          fiscal_year,
-          job_grade,
-          balance_db1: Math.round(balance_db1).toLocaleString(),
-          interest_db1: interest_db1 ? Math.round(interest_db1).toLocaleString() : '−',
-          balance_db2: Math.round(balance_db2).toLocaleString(),
-          interest_db2: interest_db2 ? Math.round(interest_db2).toLocaleString() : '−',
-          balance_db_total: (Math.round(balance_db1) + Math.round(balance_db2)).toLocaleString(),
-          balance_dc: Math.round(balance_dc).toLocaleString(),
-          interest_dc: interest_dc ? Math.round(interest_dc).toLocaleString() : '−',
-          balance_total: (Math.round(balance_db1) + Math.round(balance_db2) + Math.round(balance_dc)).toLocaleString()
-        })
+      this.timerId = _.delay(this.calculateNext, 1000, {
+        age: this.age,
+        fiscal_year: this.fiscal_year - 1,
+        job_grade: this.job_grade,
+        balance_db1: this.balance_db1,
+        interest_db1: 0,
+        balance_db2: this.balance_db2,
+        interest_db2: 0,
+        balance_dc: this.balance_dc,
+        interest_dc: 0
+      })
 
-        age++
-        fiscal_year++
-        // DB1
-        interest_db1 = balance_db1 * this.db_annual_rate
-        balance_db1 += interest_db1
-        // DB2
-        interest_db2 = balance_db2 * this.db_annual_rate
-        balance_db2 += this.POINT.DB_AND_DC[job_grade].DB * 10000 + interest_db2
-        // DC
-        interest_dc = balance_dc * this.dc_annual_rate
-        balance_dc += this.POINT.DB_AND_DC[job_grade].DC * 10000 + interest_dc
+      return null
+    }
+  },
+  methods: {
+    calculateNext (args) {
+      this.forecasts2.push({
+        age: args.age,
+        fiscal_year: args.fiscal_year,
+        job_grade: args.job_grade,
+        balance_db1: Math.round(args.balance_db1).toLocaleString(),
+        interest_db1: args.interest_db1 ? Math.round(args.interest_db1).toLocaleString() : '−',
+        balance_db2: Math.round(args.balance_db2).toLocaleString(),
+        interest_db2: args.interest_db2 ? Math.round(args.interest_db2).toLocaleString() : '−',
+        balance_db_total: (Math.round(args.balance_db1) + Math.round(args.balance_db2)).toLocaleString(),
+        balance_dc: Math.round(args.balance_dc).toLocaleString(),
+        interest_dc: args.interest_dc ? Math.round(args.interest_dc).toLocaleString() : '−',
+        balance_total: (Math.round(args.balance_db1) + Math.round(args.balance_db2) + Math.round(args.balance_dc)).toLocaleString()
+      })
+
+      args.age++
+      args.fiscal_year++
+      // DB1
+      args.interest_db1 = Math.floor(args.balance_db1 * this.db_annual_rate)
+      args.balance_db1 += args.interest_db1
+      // DB2
+      // args.interest_db2 = args.balance_db2 * this.db_annual_rate
+      // args.balance_db2 = Math.floor(args.balance_db2 +
+      //   this.POINT.DB_AND_DC[args.job_grade].DB * 10000 + args.interest_db2)
+      args.interest_db2 = Math.floor(args.balance_db2 * this.db_annual_rate)
+      args.balance_db2 += this.POINT.DB_AND_DC[args.job_grade].DB * 10000 + args.interest_db2
+      // DC
+      args.interest_dc = Math.floor(args.balance_dc * this.dc_annual_rate)
+      args.balance_dc += this.POINT.DB_AND_DC[args.job_grade].DC * 10000 + args.interest_dc
+
+      if (args.age <= 60) {
+        _.delay(this.calculateNext, 100, args)
       }
-
-      return ret
     }
   }
 }

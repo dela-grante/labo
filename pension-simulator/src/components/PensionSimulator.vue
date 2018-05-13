@@ -154,7 +154,7 @@ export default {
     return {
       fiscal_year: 2018, // 年度
       age: 36, // 年齢（4月1日時点）
-      job_grade: 'I4', //　ジョブグレード
+      job_grade: 'I4', // ジョブグレード
       balance_db1: 1600000, // 2012年3月末日以前分累積
       balance_db2: 2400000, // 2012年4月1日以降分累積
       balance_dc: 150000, // 確定拠出年金（DC）累積
@@ -204,19 +204,9 @@ export default {
       }
       console.log('Updating forecasts...')
 
-      let age = this.age
-      let fiscal_year = this.fiscal_year - 1
-      let job_grade = this.job_grade
-      let balance_db1 = this.balance_db1
-      let interest_db1 = 0
-      let balance_db2 = this.balance_db2
-      let interest_db2 = 0
-      let balance_dc = this.balance_dc
-      let interest_dc = 0;
-
       this.forecasts2 = []
 
-      this.timerId = _.delay(this.calculateNext, 1000, {
+      _.delay(this.calculateNext, 1000, {
         age: this.age,
         fiscal_year: this.fiscal_year - 1,
         job_grade: this.job_grade,
@@ -328,7 +318,7 @@ input:focus{
     border: 1px solid #3498db;
 }
 input:required + .help-text::before {
-  border-color: red; 
+  border-color: red;
   content: '*Required';
 }
 input:out-of-range + .help-text::before {

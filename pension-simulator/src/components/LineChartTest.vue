@@ -1,6 +1,8 @@
 <template>
   <div>
     <el-slider v-model="data1" :min="0" :max="100" />
+    <el-slider v-model="data2" :min="0" :max="100" />
+    <el-slider v-model="data3" :min="0" :max="100" />
     <line-chart :chart-data="datacollection">
     </line-chart>
   </div>
@@ -16,32 +18,26 @@ export default {
   data () {
     return {
       data1: 50,
-      datacollection: null
+      data2: 50,
+      data3: 50
     }
   },
-  mounted () {
-    this.fillData()
-  },
-  watch: {
-    data1 () {
-      console.log('data1 has changed ' + this.data1)
-      this.fillData()
-      //this.datacollection.datasets[0].data[0] = this.data1
-    }
-  },
-  methods: {
-    fillData () {
-      this.datacollection = {
+  computed: {
+    datacollection () {
+      return {
         labels: [ 'みなと', 'なつみ', '大輔' ],
         datasets: [
           {
             label: '年齢',
             backgroundColor: '#f87979',
-            data: [ this.data1, 23, 37 ]
+            data: [ this.data1, this.data2, this.data3 ]
           }
         ]
       }
     }
+
+  },
+  methods: {
   }
 }
 </script>

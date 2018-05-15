@@ -9,15 +9,15 @@ export default {
     return {
     }
   },
-  props: {
-    // Reveal some properties to watch them and update the chart with them.
-  },
+  props: [
+    'options'
+  ],
   watch: {
   },
   methods: {
   },
   mounted () {
-    this.renderChart(this.chartData, {})
+    this.renderChart(this.chartData, this.options)
   }
 }
 </script>

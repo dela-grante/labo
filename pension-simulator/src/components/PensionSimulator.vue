@@ -95,6 +95,10 @@
     </div>
 
     <div id="bottom">
+    <line-chart
+      :chart-data="datacollection"
+      options="options">
+    </line-chart>
     <table>
       <!-- <caption>年金シミュレーション結果</caption> -->
       <colgroup span="1" class="normal"></colgroup>
@@ -147,9 +151,14 @@
 </template>
 
 <script>
+import LineChart from './LineChart'
+
 var _ = require('lodash')
 
 export default {
+  components: {
+    LineChart
+  },
   data () {
     return {
       fiscal_year: 2018, // 年度
@@ -219,6 +228,53 @@ export default {
       })
 
       return null
+    },
+    datacollection () {
+      let ret = {
+        labels: [],
+        datasets: [
+          {
+            label: 'DB1',
+            backgroundColor: '#f87979',
+            data: []
+          },
+          {
+            label: 'DB2',
+            backgroundColor: '#79f879',
+            data: []
+          },
+          {
+            label: 'DC',
+            backgroundColor: '#7979f8',
+            data: []
+          }
+        ]
+      }
+
+      for (let age = 20; age <= 60; age++) {
+        ret.labels.push(age)
+        ret.datasets[0].data.push(0)
+        ret.datasets[1].data.push(0)
+        ret.datasets[2].data.push(0)
+      }
+      _.forEach(this.forecasts2, v => {
+        // ret.labels.push(v.age)
+        ret.datasets[0].data[v.age - 20] = v.balance_db1
+        ret.datasets[1].data[v.age - 20] = v.balance_db1 + v.balance_db2
+        ret.datasets[2].data[v.age - 20] = v.balance_db1 + v.balance_db2 + v.balance_dc
+      })
+      return ret
+
+      return {
+        labels: [ 'みなと', 'なつみ', '大輔' ],
+        datasets: [
+          {
+            label: '年齢',
+            backgroundColor: '#f87979',
+            data: [ this.age, 0, 0 ]
+          }
+        ]
+      }
     }
   },
   methods: {
@@ -227,12 +283,12 @@ export default {
         age: args.age,
         fiscal_year: args.fiscal_year,
         job_grade: args.job_grade,
-        balance_db1: Math.round(args.balance_db1).toLocaleString(),
+        balance_db1: Math.round(args.balance_db1),
         interest_db1: args.interest_db1 ? Math.round(args.interest_db1).toLocaleString() : '−',
-        balance_db2: Math.round(args.balance_db2).toLocaleString(),
+        balance_db2: Math.round(args.balance_db2),
         interest_db2: args.interest_db2 ? Math.round(args.interest_db2).toLocaleString() : '−',
         balance_db_total: (Math.round(args.balance_db1) + Math.round(args.balance_db2)).toLocaleString(),
-        balance_dc: Math.round(args.balance_dc).toLocaleString(),
+        balance_dc: Math.round(args.balance_dc),
         interest_dc: args.interest_dc ? Math.round(args.interest_dc).toLocaleString() : '−',
         balance_total: (Math.round(args.balance_db1) + Math.round(args.balance_db2) + Math.round(args.balance_dc)).toLocaleString()
       })
@@ -253,7 +309,7 @@ export default {
       args.balance_dc += this.POINT.DB_AND_DC[args.job_grade].DC * 10000 + args.interest_dc
 
       if (args.age <= 60) {
-        _.delay(this.calculateNext, 100, args)
+        _.delay(this.calculateNext, 0, args)
       }
     }
   }

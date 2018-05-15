@@ -3,7 +3,9 @@
     <el-slider v-model="data1" :min="0" :max="100" />
     <el-slider v-model="data2" :min="0" :max="100" />
     <el-slider v-model="data3" :min="0" :max="100" />
-    <line-chart :chart-data="datacollection">
+    <line-chart
+      :chart-data="datacollection"
+      options="options">
     </line-chart>
   </div>
 </template>
@@ -17,9 +19,10 @@ export default {
   },
   data () {
     return {
-      data1: 50,
-      data2: 50,
-      data3: 50
+      data1: 3,
+      data2: 23,
+      data3: 37,
+      options: { cubicInterpolationMode: 'monotone', fill: false }
     }
   },
   computed: {
@@ -35,7 +38,6 @@ export default {
         ]
       }
     }
-
   },
   methods: {
   }
